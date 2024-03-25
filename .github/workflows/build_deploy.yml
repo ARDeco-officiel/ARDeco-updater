@@ -23,10 +23,13 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2.4.2
         with:
-          gradle-version: 8.1
+          gradle-version: 8.5
 
       - name: Build project
-        run: ./gradlew shadowJar
+        run: gradle shadowJar
+
+      - name: Make jar executable
+        run: chmod +x build/libs/ARDeco-updater.jar
 
       - name: Deploy file
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
