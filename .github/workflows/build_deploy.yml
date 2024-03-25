@@ -1,0 +1,36 @@
+on:
+  # push:
+  #   branches:
+  #     - main
+  workflow_dispatch:
+jobs:
+  build:
+    name: Build and deploy project
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: oracle
+          java-version: 21
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2.4.2
+        with:
+          gradle-version: 8.1
+
+      - name: Build project
+        run: ./gradlew shadowJar
+
+      - name: Deploy file
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          server: ${{ vars.SERVER_HOST }}
+          username: ${{ vars.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          local_path: './build/libs/ARDeco-updater.jar'
+          remote_path: '/opt/ardeco/updater'
+          sftp_only: true
