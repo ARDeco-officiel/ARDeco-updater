@@ -35,7 +35,7 @@ jobs:
           remote_path: '/opt/ardeco/updater'
           sftp_only: true
 
-      - name: Restart service
+      - name: Make jar file executable
         uses: appleboy/ssh-action@master
         with:
           host: ${{ vars.SERVER_HOST }}
