@@ -17,9 +17,6 @@ jobs:
           distribution: oracle
           java-version: 21
 
-      - name: Make gradlew executable
-        run: chmod +x gradlew
-
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2.4.2
         with:
@@ -27,9 +24,6 @@ jobs:
 
       - name: Build project
         run: gradle shadowJar
-
-      - name: Make jar executable
-        run: chmod +x build/libs/ARDeco-updater.jar
 
       - name: Deploy file
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
@@ -40,3 +34,11 @@ jobs:
           local_path: './build/libs/ARDeco-updater.jar'
           remote_path: '/opt/ardeco/updater'
           sftp_only: true
+
+      - name: Restart service
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ vars.SERVER_HOST }}
+          username: ${{ vars.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: chmod +x /opt/ardeco/updater/ARDeco-updater.jar
